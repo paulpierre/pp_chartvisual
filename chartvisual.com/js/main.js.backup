@@ -1,0 +1,661 @@
+var cv_currency_pair = 'eurusd';
+
+var laser_map = {};
+
+
+var cv_timeframe = 'h1';
+
+var cv_domain = 'api.chartvisual.com';
+
+var vol,barWidth,_cbCSI,_cbLaser;
+
+var margin = {top: 20, right: 60, bottom: 220, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 550 - margin.top - margin.bottom;
+
+var parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse;
+
+var x = techan.scale.financetime()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height , 0])
+
+var candlestick = techan.plot.candlestick()
+    .xScale(x)
+    .yScale(y);
+
+var laser_sell = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); })
+    .defined(function(d){
+        //console.log(laser_map[d.date]);
+
+
+
+        if(typeof laser_map[d.date] !== "undefined" && laser_map[d.date].bear >0 && laser_map[d.date].bull==0)
+        {
+            return d;
+        }
+        else {
+            //console.log(laser_map[d.date]);
+            //if(typeof laser_map[d.date] !== "undefined") console.log("bear: " + laser_map[d.date].bear + " bull: " + laser_map[d.date].bull);
+            if(typeof laser_map[d.date] !== "undefined" && laser_map[d.date].bear >0 && laser_map[d.date].bull >0)
+            {
+                var color;
+                if(laser_map[d.date].buy > 0) color = "#00ffff"; else color ="#ffff00";
+
+                    svg.append("circle")
+                        .attr("cx", x(d.date))
+                        .attr("cy", y(d.close)-30)
+                        .attr("fill",color)
+                        .attr("r", 5);
+
+                return d;
+
+            }
+
+            else
+            return false
+        };
+    });
+var laser_buy = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); })
+    .defined(function(d){
+        //console.log(laser_map[d.date]);
+        if(typeof laser_map[d.date] !== "undefined" && laser_map[d.date].bull >0) return d;
+        else return false;
+    });
+
+
+var svg = d3.select("#chart-market-container").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .tickFormat(d3.format(',.5fs'))
+    .orient("right");
+
+var yRightAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var ohlcAnnotation = techan.plot.axisannotation()
+    .axis(yAxis)
+    .format(d3.format(',.5fs'));
+
+var ohlcRightAnnotation = techan.plot.axisannotation()
+    .axis(yRightAxis)
+    .format(d3.format(',.5fs'))
+    .width(60)
+    .translate([width, 0]);
+
+var yVolume = d3.scale.linear()
+    .domain([-4,4])
+    .range([-30, 30]);
+
+var xVolume = techan.scale.financetime()
+    .range([0, width]);
+
+var csi_x_axis = d3.svg.axis()
+    .scale(xVolume)
+    .outerTickSize(0)
+    .tickFormat("")
+    .orient("bottom");
+
+var csi_y_axis = d3.svg.axis()
+    .scale(yVolume)
+    .outerTickSize(0)
+    .orient("right");
+
+var volume = techan.plot.volume()
+    .xScale(x)
+    .yScale(yVolume);
+
+var csi_colors = {
+    "1":"#d0fb99",
+    "2":"#afe2ad",
+    "3":"#7fbf9c",
+    "4":"#418686",
+    "-1":"#fb9b00",
+    "-2":"#fb7300",
+    "-3":"#fa4602",
+    "-4":"#f90006"
+};
+
+var csi_annotation = techan.plot.axisannotation()
+    .axis(xAxis)
+    .width(160)
+    .translate([0, height+110]);
+
+
+var timeAnnotation = techan.plot.axisannotation()
+    .axis(xAxis)
+    .format(d3.time.format('%Y-%m-%d %H:%M:%S'))
+    .width(150)
+    .translate([0, height+20]);
+
+var crosshair = techan.plot.crosshair()
+    .xScale(x)
+    .yScale(y)
+    .xAnnotation([timeAnnotation,csi_annotation])
+    .yAnnotation([ohlcRightAnnotation])
+    .on("enter", enter)
+    .on("out", out)
+    .on("move", move);
+
+var coordsText = svg.append('text')
+    .style("text-anchor", "middle")
+    .attr("class", "coords")
+    .attr("x", width / 2  )
+    .attr("y", 15);
+
+var csi_text = svg.append('text')
+    .style("text-anchor", "middle")
+    .attr("class", "csi_text")
+    .attr("x", width / 2 )
+    .attr("y", 30);
+
+var laser_text = svg.append('text')
+    .style("text-anchor", "middle")
+    .attr("class", "csi_text")
+    .attr("x", width / 2 )
+    .attr("y", 45);
+
+
+function render_chart(chart_type,callback)
+{
+    var _c, url;
+
+    switch(chart_type)
+    {
+
+    /** =======================
+     *  CANDLESTICK MARKET DATA
+     *  =======================
+     */
+        case 'market':
+            //window.cv_market_data = "undefined";
+            svg.selectAll("g").remove();
+            svg.selectAll("circle").remove();
+
+
+            url = "http://" + cv_domain +"/" + chart_type + "/" + cv_currency_pair + "/" + cv_timeframe + "/";
+            console.log(url);
+
+            d3.json(url, function(error, data) {
+                var accessor = candlestick.accessor();
+                //console.log(data);
+
+                if(typeof data.response == "undefined" && data.response == 0)
+                {
+                    $.notify("No candles supported for this pair/timeframe :(", "warn");
+
+                    //alert("No candles supported for this pair/timeframe :(");
+                    return;
+                }
+
+                data = data.data.map(function(d) {
+                    return {
+                        date: parseDate(d.time),
+                        open: +d.open,
+                        high: +d.high,
+                        low: +d.low,
+                        close: +d.close
+                    };
+                }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+
+                window.cv_market_data = data;
+
+                x.domain(data.map(accessor.d));
+                y.domain(techan.scale.plot.ohlc(data, accessor).domain());
+
+                //return
+                svg.append("g")
+                    .datum(data)
+                    .attr("class", "candlestick")
+                    .call(candlestick);
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+
+                d3.selectAll(".candlestick")
+                    .on('mouseover',function(d,i){
+                        //console.log(d);
+                    });
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .attr("transform", "translate(" + width + " ,0)")
+                    .call(yAxis)
+                    .append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", -16)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("Price ($)");
+
+                svg.append('g')
+                    .attr("class", "crosshair")
+                    .call(crosshair);
+            });
+            break;
+
+
+    /** ================
+     *  LASER TREND TOOL
+     *  ================
+     */
+
+        case 'laser':
+
+            /** -------------------------
+             *  Homebrew callback support
+             *  -------------------------
+             */
+
+            if(typeof window.cv_market_data !== "undefined" && window.cv_market_data.length > 1)
+            {
+                window.clearInterval(_cbLaser);
+                console.log("done checking.");
+            } else
+            {
+                if(typeof _cbLaser == "undefined")
+                {
+                    _cbLaser = window.setInterval(function(){
+                        _c++;
+                        //console.log("checking again: " + _c);
+                        render_chart('laser');
+                    },500);
+                }
+                return;
+            }
+
+            /** --------------------------
+             *  Grab JSON data from server
+             *  --------------------------
+             */
+
+            url = "http://" + cv_domain +"/" + chart_type + "/" + cv_currency_pair + "/" + cv_timeframe + "/";
+            console.log(url);
+            d3.json(url, function(error, data) {
+
+
+                if(data.response == 0)
+                {
+                    //alert("No laser trend data supported for this pair/timeframe :(");
+                    $.notify("No laser trend data supported for this pair/timeframe :(", "warn");
+
+                    return;
+                }
+
+
+                data = data.data.map(function(d) {
+                    laser_map[parseDate(d.time)] = {
+                        bull:   +d.bull,
+                        bear:   +d.bear,
+                        buy:    +d.buy,
+                        sell:   +d.sell,
+                        av:     +d.av,
+                        mm:     +d.mm
+                    };
+                    return {
+                        date:   parseDate(d.time),
+                        bull:   +d.bull,
+                        bear:   +d.bear,
+                        buy:    +d.buy,
+                        sell:   +d.sell,
+                        av:     +d.av,
+                        mm:     +d.mm
+                    };
+                });//.sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+
+                window.cv_laser_data = data;
+                //console.log(window.cv_market_data);
+
+                /*
+                var filter = svg.append("defs")
+                    .append("filter")
+                    .attr("id", "blur")
+                    .append("feGaussianBlur")
+                    .attr("stdDeviation", 2);
+*/
+
+                /** ===============
+                 *  Draw BEAR laser
+                 *  ===============
+                 */
+
+
+
+                 svg.select("g").selectAll("laser")
+                    .data(window.cv_market_data)
+                    .enter()
+                    .append("path")
+                    .attr("class","laser_sell laser")
+                    .attr("d", laser_sell(window.cv_market_data))
+                    .style('transform','translate(0px,-30px)');
+
+
+                /** ===============
+                 *  Draw BULL laser
+                 *  ===============
+                 */
+
+                svg.select("g").selectAll("laser")
+                    .data(window.cv_market_data)
+                    .enter()
+                    .append("path")
+                    .attr("class","laser_buy laser")
+                    .attr("d", laser_buy(window.cv_market_data))
+                    .style('transform','translate(0px,-30px)');
+
+
+                /*
+                $(".laser_sell")
+                    .clone()
+                    .removeAttr("class")
+                    .attr("class","laser_sell_glow")
+                    .attr("filter","url(#blur)")
+                    .attr("x",$(this).parent().attr("x"))
+                    .appendTo($("svg"));*/
+
+
+
+
+                     //.attr("filter", "url(#blur)");
+
+/*
+
+                svg.append("path")
+                    .datum(window.cv_market_data)
+                    .attr("class", function(d){
+                        console.log(d);
+                        return "laser_buy_glow";
+                        if(typeof laser_map[d.date] !== "undefined") //no data
+                        {
+                            if(laser_map[d.date].bull > 0 && laser_map[d.date].bear == 0) return "laser_buy_glow"; else     //bull+buy
+                            if(laser_map[d.date].bear > 0 && laser_map[d.date].bull == 0 ) return "laser_sell_glow"; else   //bear+buy
+                            if(laser_map[d.date].bear > 0 && laser_map[d.date].bull > 0 ) return; else    //change-up
+                                return;
+                        } else {
+                            return;
+                        }
+
+                    })
+                    .attr("d", laser)
+                    .attr("filter", "url(#blur)");
+
+
+                //return;
+                svg.append("path")
+                    .datum(window.cv_market_data)
+                    .attr("class", function(d){
+                        return "laser_buy";
+                        if(typeof laser_map[d.date] !== "undefined") //no data
+                        {
+                            if(laser_map[d.date].bull > 0 && laser_map[d.date].bear == 0) return "laser_buy"; else     //bull+buy
+                            if(laser_map[d.date].bear > 0 && laser_map[d.date].bull == 0 ) return "laser_sell"; else   //bear+buy
+                            if(laser_map[d.date].bear > 0 && laser_map[d.date].bull > 0 ) return; else    //change-up
+                                return;
+                        } else {
+                            return;
+                        }
+
+                    })
+                    .attr("d", laser);
+
+
+                    */
+            });
+            break;
+
+
+    /** ===========================
+     *  CURRENCY STRENGTH INDICATOR
+     *  ===========================
+     */
+
+        case 'csi':
+
+            /** -------------------------
+             *  Homebrew callback support
+             *  -------------------------
+             */
+            if(typeof window.cv_market_data !== "undefined" && window.cv_market_data.length > 1)
+            {
+                window.clearInterval(_cbCSI);
+                console.log("done checking.");
+            } else
+            {
+                if(typeof _cbCSI == "undefined")
+                {
+                    _cbCSI = window.setInterval(function(){
+                        _c++;
+                        //console.log("checking again: " + _c);
+                        render_chart('csi');
+                    },500);
+                }
+                return;
+            }
+
+
+            /** --------------------------
+             *  Grab JSON data from server
+             *  --------------------------
+             */
+
+            url = "http://"+ cv_domain + "/" + chart_type + "/" + cv_currency_pair + "/" + cv_timeframe + "/";
+            console.log(url);
+            d3.json(url, function(error, data) {
+                var accessor = candlestick.accessor();
+
+                if(data.response == 0)
+                {
+                    $.notify("No CSI data supported for this pair/timeframe :(", "warn");
+                    //alert("No CSI data supported for this pair/timeframe :(");
+                    return;
+                }
+
+                data = data.data.map(function(d) {
+
+                    return {
+                        date: parseDate(d.time)
+                        ,volume:(d.bull =="0")? d.bear: d.bull
+                    };
+                }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+
+
+                barWidth = width / data.length;
+
+                vol = svg.selectAll("volume")
+                    .data(data)
+                    .enter()
+                    .append("g")
+                    .attr("class","volume")
+                    .attr("transform", function(d, i) {
+                        var _x = Math.floor(x(d.date))-2;
+                        if(i == d.length) return;
+                        return "translate(" + _x + "," + (height +40) + ")";
+                    });
+
+                vol.append("rect")
+                    .attr("class",function(d){
+                        switch(d.volume)
+                        {
+                            case 1: return "csi_strong_1";break;
+                            case 2: return "csi_strong_2";break;
+                            case 3: return "csi_strong_3";break;
+                            case 4: return "csi_strong_4";break;
+                            case -1: return "csi_weak_1";break;
+                            case -2: return "csi_weak_2";break;
+                            case -3: return "csi_weak_3";break;
+                            case -4: return "csi_weak_4";break;
+                        }
+                    })
+                    .attr("y",function(d) {
+                        //console.log("vol:"+ d.volume + " y:" + yVolume(d.volume));
+                        if(d.volume > 0) return 40-yVolume(d.volume);
+                        else return Math.abs(40+yVolume(d.volume))-yVolume(d.volume);
+                    })
+                    .attr("height", function(d) { return  Math.abs(yVolume(d.volume)); })
+                    .attr("width", barWidth - 2)
+                    .style("fill", function(d){
+                        var _color=csi_colors[d.volume];
+                        var t = textures.lines()
+                            .strokeWidth(0)
+                            .background(_color)
+                            .stroke("#fff")
+                            .orientation("horizontal")
+                            .shapeRendering("crispEdges")
+                            .size(10)
+                        svg.call(t);
+                        return t.url();
+                    });
+
+                svg.append("g")
+                    .attr("class", "csi_axis x axis")
+                    .attr("transform", "translate(0," + (height+80) + ")")
+                    .call(csi_x_axis);
+
+                svg.append("g")
+                    .attr("class", "csi_axis y axis")
+                    //.style("display","none")
+                    .attr("transform", "translate("+ width + "," + (height+80) + ")")
+                    .style("font-size",8)
+                    .call(csi_y_axis);
+
+            });
+            break;
+
+    }
+    $('.loading').hide();
+}
+
+
+function enter() {
+    coordsText.style("display", "inline");
+    csi_text.style("display", "inline");
+    laser_text.style("display", "inline");
+
+
+}
+
+
+function out() {
+    coordsText.style("display", "none");
+    csi_text.style("display", "none");
+    laser_text.style("display", "none");
+
+    d3.select("g.volume").style("stroke","none");
+
+}
+
+
+function move(coords) {
+    coordsText.text(
+        'Time: ' + timeAnnotation.format()(coords[0]) + ", Price: " + ohlcAnnotation.format()(coords[1])
+    );
+
+    d3.selectAll(".laser")
+        .filter(function(d) {
+            if(timeAnnotation.format()(d.date) == timeAnnotation.format()(coords[0]) && typeof laser_map[d.date] !== "undefined")
+            {
+
+                if(laser_map[d.date].bull == laser_map[d.date].bear  && laser_map[d.date].sell >0)
+                    laser_text.text("Laser: Sell Trend");
+                else if (laser_map[d.date].bull == laser_map[d.date].bear && laser_map[d.date].buy >0)
+                    laser_text.text("Laser: Buy trend");
+                else if(laser_map[d.date].bear >0)
+                    laser_text.text("Laser: Sell Trend");
+                else if(laser_map[d.date].bull>0)
+                    laser_text.text("Laser: Buy trend");
+
+
+                else laser_text.text("");
+
+
+                /*
+                        if(typeof laser_map[_date] !== "undefined")
+                        {
+                            if(typeof laser_map[_date].sell !== "undefined" && typeof laser_map[_date].buy !== "undefined")
+                            {
+                                if(laser_map[_date].buy >0) laser_text.text("Laser: Buy Trend"); else if(laser_map[_date].sell>0) laser_text.text("Laser: Sell trend");
+                            }
+                        } else laser_text.text("");*/
+            }
+
+        });
+
+    d3.selectAll("g.volume")
+        .filter(function(d) {
+            if(timeAnnotation.format()(d.date) == timeAnnotation.format()(coords[0]))
+            {
+                var csi = d.volume;
+                var csi_desc;
+
+                switch(parseInt(csi))
+                {
+                    case 1: csi_desc = "Weak Bullish";break;
+                    case 2: csi_desc = "Moderate Bullish";break;
+                    case 3: csi_desc = "Strong Bullish";break;
+                    case 4: csi_desc = "Exhaustive Bullish";break;
+                    case -1: csi_desc = "Weak Bearish";break;
+                    case -2: csi_desc = "Moderate Bearish";break;
+                    case -3: csi_desc = "Strong Bearish";break;
+                    case -4: csi_desc = "Exhaustive Bearish";break;
+                    default: csi_desc = "N/A";break;
+                }
+
+                csi_text.text("Currency Strength: " + d.volume + " " + csi_desc);
+                csi_annotation.format(function(d){ return csi;})
+                d3.select(this)
+                    .style('stroke-width', 2)
+                    .style('stroke', 'steelblue')
+            } else {
+                d3.select(this).style("stroke","none");
+            }
+    });
+}
+
+$( document ).ready(function() {
+    $('#btn-select-currency-pair b').text(cv_currency_pair.toUpperCase());
+    $('#btn-select-timeframe b').text(cv_timeframe.toUpperCase());
+
+
+    $('#chart_currency_pair ul li a').click(function(e){
+        cv_currency_pair = $(this).text();
+        $('#btn-select-currency-pair b').text(cv_currency_pair);
+        render_chart('market')
+        render_chart('csi');
+        render_chart('laser');
+
+    });
+
+    $('#chart_timeframe ul li a').click(function(e){
+        cv_timeframe = $(this).text();
+        $('#btn-select-timeframe b').text(cv_timeframe);
+        render_chart('market');
+        render_chart('csi');
+        render_chart('laser');
+
+
+    });
+
+    render_chart('market');
+    render_chart('csi');
+    render_chart('laser');
+
+});

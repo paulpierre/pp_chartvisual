@@ -1,0 +1,42 @@
+[07-Mar-2016 13:33:38 America/New_York] 
+[07-Mar-2016 13:38:11 America/New_York] 
+[07-Mar-2016 13:41:03 America/New_York] 1
+[07-Mar-2016 13:41:04 America/New_York] 
+[07-Mar-2016 13:43:02 America/New_York] Array
+(
+    [MODULE] => Customer
+    [COMMAND] => add
+    [FirstName] => Test
+    [LastName] => User
+    [Country] => 129
+    [campaignId] => 135
+    [currency] => USD
+    [password] => test123
+    [Phone] => +39 393 393 3902
+    [api_username] => aff60951
+    [api_password] => 56c20a440e039
+    [a_aid] => 123456
+    [jsonResponse] => true
+    [email] => test1236@gmail.com
+)
+
+[07-Mar-2016 13:43:03 America/New_York] 
+[07-Mar-2016 14:04:52 America/New_York] Array
+(
+    [MODULE] => Customer
+    [COMMAND] => add
+    [FirstName] => Test
+    [LastName] => User
+    [Country] => 129
+    [campaignId] => 135
+    [currency] => USD
+    [password] => test123
+    [Phone] => +39 393 393 3902
+    [api_username] => aff60951
+    [api_password] => 56c20a440e039
+    [a_aid] => 123456
+    [jsonResponse] => true
+    [email] => test1236@gmail.com
+)
+
+[07-Mar-2016 14:04:52 America/New_York] RESPONSE{"status":{"connection_status":"successful","operation_status":"failed","errors":["emailAlreadyExists"]}}

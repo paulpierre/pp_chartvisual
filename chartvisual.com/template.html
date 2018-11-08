@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ChartVisual.com - World-class Forex Tools</title>
+
+	<!-- Global stylesheets -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	<link href="assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/core.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/components.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/colors.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/icons/fontawesome/styles.min.css" rel="stylesheet" type="text/css">
+	<!-- /global stylesheets -->
+
+	<!-- Core JS files -->
+	<script type="text/javascript" src="assets/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="assets/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="assets/js/core/libraries/jquery_ui/widgets.min.js"></script>
+	<script type="text/javascript" src="assets/js/core/libraries/jquery_ui/touch.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/sliders/slider_pips.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/selects/selectboxit.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/selects/bootstrap_select.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/styling/switchery.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/styling/uniform.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/inputs/duallistbox.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/ui/moment/moment.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/pickers/daterangepicker.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/trees/fancytree_all.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/ui/prism.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/pickers/color/spectrum.js"></script>
+
+	<script type="text/javascript" src="assets/js/core/app.js"></script>
+	<script type="text/javascript" src="assets/js/pages/sidebar_components.js"></script>
+	<!-- /theme JS files -->
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="apple-touch-icon" sizes="57x57" href="/meta/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/meta/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/meta/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/meta/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/meta/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/meta/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/meta/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/meta/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/meta/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/meta/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/meta/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/meta/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/meta/favicon-16x16.png">
+    <link rel="manifest" href="/meta/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/meta/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- legacy -->
+    <link href="css/tooltip.css" rel="stylesheet">
+
+    <script src="js/slide.js"></script>
+    <script src="js/date.js"></script>
+    <script src="js/tooltip.js"></script>
+    <script src="js/favicon.js"></script>
+    <script src="js/main.js"></script>
+    <script src='js/d3.min.js'></script>
+    <script src='js/techan.min.js'></script>
+    <script src="js/texture.js"></script>
+    <script src="js/notify.min.js"></script>
+    <script>
+        $(function() {
+
+
+            // Switchery toggles
+            // ------------------------------
+
+            var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
+            switches.forEach(function(html) {
+                var switchery = new Switchery(html, {color: '#4CAF50'});
+            });
+        });
+    </script>
+
+
+</head>
+
+<body class="sidebar-xs">
+
+	<!-- Main navbar -->
+	<div class="navbar navbar-inverse">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="index.html"><img src="assets/images/logo_light.png" alt=""></a>
+
+			<ul class="nav navbar-nav pull-right visible-xs-block">
+				<li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
+				<li><a class="sidebar-mobile-main-toggle"><i class="icon-paragraph-justify3"></i></a></li>
+				<li><a class="sidebar-mobile-secondary-toggle"><i class="icon-more"></i></a></li>
+			</ul>
+		</div>
+
+		<div class="navbar-collapse collapse" id="navbar-mobile">
+			<ul class="nav navbar-nav">
+				<li>
+					<a class="sidebar-control sidebar-main-toggle hidden-xs">
+						<i class="icon-paragraph-justify3"></i>
+					</a>
+				</li>
+
+				<li>
+					<a class="sidebar-control sidebar-secondary-hide hidden-xs">
+						<i class="icon-transmission"></i>
+					</a>
+				</li>
+
+
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+
+				<li class="dropdown dropdown-user">
+					<a class="dropdown-toggle" data-toggle="dropdown">
+						<img src="assets/images/placeholder.jpg" alt="">
+						<span>Username</span>
+						<i class="caret"></i>
+					</a>
+
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li><a href="#"><i class="icon-user-plus"></i> My profile</a></li>
+						<li><a href="#"><i class="icon-coins"></i> My balance</a></li>
+						<li><a href="#"><span class="badge bg-blue pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>
+						<li class="divider"></li>
+						<li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
+						<li><a href="#"><i class="icon-switch2"></i> Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /main navbar -->
+
+
+	<!-- Page container -->
+	<div class="page-container">
+
+		<!-- Page content -->
+		<div class="page-content">
+
+
+			<!-- Secondary sidebar -->
+			<div class="sidebar sidebar-secondary sidebar-default">
+				<div class="sidebar-content">
+
+					<!-- Sidebar tabs -->
+					<div class="tabbable sortable">
+						<ul class="nav nav-lg nav-tabs nav-justified">
+							<li class="active">
+								<a href="#components-tab" data-toggle="tab">
+									<i class="icon-grid-alt"></i>
+									<span class="visible-xs-inline-block position-right">Components</span>
+								</a>
+							</li>
+
+							<li>
+								<a href="#forms-tab" data-toggle="tab">
+									<i class="icon-menu6"></i>
+									<span class="visible-xs-inline-block position-right">Forms</span>
+								</a>
+							</li>
+						</ul>
+
+						<div class="tab-content">
+							<div class="tab-pane active no-padding" id="trendlaser">
+
+								<!-- Block buttons -->
+								<div class="sidebar-category">
+									<div class="category-title">
+                                        <span class="checkbox-inline checkbox-switchery checkbox-right switchery-xs">
+                                            <input type="checkbox" class="switch" checked="checked">
+                                            <span class="glyphicon glyphicon-signal" style="font-size:12px;"></span>
+                                            Trend Detector
+                                        </span>
+										<ul class="icons-list">
+											<li><a href="#" data-action="collapse"></a></li>
+										</ul>
+									</div>
+
+									<div class="category-content">
+										<div class="row">
+											<div class="col-lg-12">
+
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="row">
+                                                            <span class="col-sm-7">Trend:</span>
+                                                            <span class="col-sm-5" id="ctd-trend"><strong><span class="na">N/A</span></strong></span>
+                                                        </div>
+                                                        <div class="row">
+                                                            <span class="col-sm-7">Overall trades:</span>
+                                                            <span class="col-sm-5" id="ctd-overall"><strong><span class="na">N/A</span></strong></span>
+                                                        </div>
+                                                        <div class="row">
+                                                            <span class="col-sm-7">Profitable trades:</span>
+                                                            <span class="col-sm-5" id="ctd-profit"><strong><span class="na">N/A</span></strong></span>
+                                                        </div>
+                                                        <div class="row">
+                                                            <span class="col-sm-7">Success Rate:</span>
+                                                            <span class="col-sm-5" id="ctd-success"><strong><span class="na">N/A</span></strong></span>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-sm-6">
+                                                        <div class="row">
+                                                            <span class="col-sm-7">Best Profit:</span>
+                                                            <span class="col-sm-5" id="ctd-bestprofit"><strong><span class="na">N/A</span></strong></span>
+                                                        </div>
+                                                        <div class="row">
+                                                            <span class="col-sm-7">Average Profit:</span>
+                                                            <span class="col-sm-5" id="ctd-avgprofit"><strong><span class="na">N/A</span></strong></span>
+                                                        </div>
+                                                        <div class="row">
+                                                            <span class="col-sm-7">Minimum Move:</span>
+                                                            <span class="col-sm-5" id="ctd-mm"><strong><span class="na">N/A</span></strong></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /block buttons -->
+							</div>
+						</div>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active no-padding" id="strengthometer">
+
+                                <!-- Block buttons -->
+                                <div class="sidebar-category">
+                                    <div class="category-title">
+                                        <span class="checkbox-inline checkbox-switchery checkbox-right switchery-xs">
+                                            <input type="checkbox" class="switch" checked="checked">
+                                            <span class="glyphicon glyphicon-object-align-bottom" style="font-size:12px;"></span>
+
+                                            Strength Meter
+                                        </span>
+                                        <ul class="icons-list">
+                                            <li><a href="#" data-action="collapse"></a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="category-content">
+                                        <div class="row">
+                                            <span class="col-sm-5">Pair strength:</span>
+                                            <span class="col-sm-7" id="som-strength"><strong><span class="na">N/A</span></strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /block buttons -->
+                            </div>
+                        </div>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active no-padding" id="scalpinghero">
+
+                                <!-- Block buttons -->
+                                <div class="sidebar-category">
+                                    <div class="category-title">
+                                        <span class="checkbox-inline checkbox-switchery checkbox-right switchery-xs">
+                                            <input type="checkbox" class="switch" checked="checked">
+                                                <span class="glyphicon glyphicon-flash" style="font-size:12px;"></span>
+                                                Scalping Hero
+                                        </span>
+                                        <ul class="icons-list">
+                                            <li><a href="#" data-action="collapse"></a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="category-content">
+                                        <div class="row">
+                                            <span class="col-sm-5">Indication:</span>
+                                            <span class="col-sm-7" id="sh-strength"><strong><span class="na">N/A</span></strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /block buttons -->
+                            </div>
+                        </div>
+
+					</div>
+				</div>
+			</div>
+			<!-- /secondary sidebar -->
+
+
+			<!-- Main content -->
+			<div class="content-wrapper">
+
+
+
+				<!-- Content area -->
+				<div class="content">
+
+                    <div class="row">
+
+                        <div class="col-lg-4">
+                            <h6><span class="glyphicon glyphicon-signal" style=""></span> Trend Detector</h6>
+
+                            <!-- Members online -->
+                            <div class="panel bg-teal-400">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-lg-6 text-center">
+
+                                            <div class="col-lg-5">
+                                                    <span class="text-muted"> Trend:</span>
+                                            </div>
+                                            <div class="col-lg-7">
+                                                <h3 class="no-margin label-rounded text-center bg-teal-800">SELL</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 text-center">
+
+                                            <div class="col-lg-5">
+                                                <span class="text-muted">Best profit:</span>
+                                            </div>
+                                            <div class="col-lg-7">
+                                                <h6 class="no-margin label-rounded text-center bg-teal-800">1891
+                                                </h6>
+                                                <div class="text-muted text-size-small">(pips)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- /members online -->
+
+                        </div>
+                    </div>
+
+
+					<!-- Sidebars overview -->
+					<div class="panel panel-flat">
+
+						<div class="panel-heading">
+                            <div class="row">
+                                <h5 class="panel-title">
+                                    <div class="row">
+                                        <span class="col-sm-2">
+                                            Date:
+                                            <span id="mkt-date">
+                                                <strong><span class="na">N/A</span></strong>
+                                            </span>
+                                        </span>
+
+                                        <span class="col-sm-2">
+                                            Price:
+                                            <span id="mkt-price">
+                                                <strong><span class="na">N/A</span></strong>
+                                            </span>
+                                        </span>
+                                        <span class="col-sm-2">
+                                            Next tick:
+                                            <span id="tickcountdown">
+                                                <strong><span class="na">N/A</span></strong>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </h5>
+                                <div class="heading-elements">
+                                    <ul class="icons-list">
+                                        <li><a data-action="collapse"></a></li>
+                                        <li><a data-action="reload"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+						</div>
+
+						<div class="panel-body row">
+                            <div class="col-lg-12 text-center" id="chart-market-container">
+                                <img class="loading" src="img/loading.gif" class="text-center"/>
+                            </div>
+						</div>
+					</div>
+					<!-- /sidebars overview -->
+
+
+					<!-- Footer -->
+					<div class="footer text-muted">
+						&copy; 2016. <a href="#">ChartVisual.com</a>
+					</div>
+					<!-- /footer -->
+
+				</div>
+				<!-- /content area -->
+
+			</div>
+			<!-- /main content -->
+
+		</div>
+		<!-- /page content -->
+
+	</div>
+	<!-- /page container -->
+
+</body>
+</html>

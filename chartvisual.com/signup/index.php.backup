@@ -1,0 +1,638 @@
+<?
+
+define('BROKER_MAGNUM',1);
+define('BROKER_BANCO',2);
+define('BROKER_TR',3);
+
+
+define('MAGNUM_AFF_USER','aff60951');
+define('MAGNUM_AFF_PASSWORD','56c20a440e039');
+define('MAGNUM_AFF_CAMPAIGN_ID','135');
+define('MAGNUM_API_URL','https://api-spotplatform.magnumoptions.eu/Api');
+
+define('BANCO_AFF_USER','chartvisual');
+define('BANCO_AFF_PASSWORD','c7R3WZs9dl');
+define('BANCO_AFF_CAMPAIGN_ID','26');
+define('BANCO_API_URL','http://api-spotplatform.banco-capital.com/api');
+
+/**
+BANCO
+curl --data "MODULE=Country&COMMAND=view&api_username=chartvisual&api_password=c7R3WZs9dl&jsonResponse=true" http://api-spotplatform.banco-capital.com/api
+curl --data "FirstName=Testes&LastName=McTester&email=guitarsmith@gmail.com&Phone=939339802339&Country=129&currency=USD&password=cv123456789&MODULE=Customer&COMMAND=add&api_username=chartvisual&api_password=c7R3WZs9dl&jsonResponse=true" http://api-spotplatform.banco-capital.com/api
+
+MAGNUM
+curl --data "FirstName=Testes&LastName=McTester&email=guitarsmith@gmail.com&Phone=939339802339&Country=129&currency=USD&password=cv123456789&MODULE=Customer&COMMAND=add&api_username=aff60951&api_password=56c20a440e039&jsonResponse=true" https://api-spotplatform.magnumoptions.eu/Api
+
+*/
+$ip = $_SERVER['REMOTE_ADDR'];
+if(isset($ip))
+{
+	$raw = json_decode(file_get_contents('http://ipinfo.io/' . $ip),true);
+	$user_country = strtolower($raw['country']);
+}	
+	else $user_country = 'my';
+	
+	
+$raw = json_decode(file_get_contents('countries.json'),true);
+foreach ($raw as $item)
+{
+	if($user_country == trim(strtolower($item['iso'])))
+		$country_code == $item['id'];
+	else $country_code = 129;
+}
+
+
+
+
+if(
+	isset($_GET['firstname']) &&
+	isset($_GET['lastname']) &&
+	isset($_GET['email']) &&
+	isset($_GET['phonenumber'])
+) {
+	
+	$first_name = $_GET['firstname'];
+	$last_name = $_GET['lastname'];
+	$email = $_GET['email'];
+	$phone_number = $_GET['phonenumber'];
+
+	$post = Array(
+	    'MODULE' => 'Customer',
+	    'COMMAND' => 'add',
+		'FirstName'=>$first_name,
+		'LastName'=>$last_name,
+		'Country'=>$country_code,
+		'campaignId'=>BANCO_AFF_CAMPAIGN_ID,
+		'currency'=>'USD',
+		'Phone'=>$phone_number,
+		'api_username'=>BANCO_AFF_USER,
+		'api_password'=>BANCO_AFF_PASSWORD,
+		//'a_aid'=>AFF_PASSWORD,
+		'jsonResponse'=>'true',
+		'email'=>$email
+	);
+	
+	
+	
+	/**
+	MODULE=Customer
+	COMMAND=add
+	FirstName=Test
+	LastName=Customer
+	email=test1@SpotOption.com
+	password=123456
+	Country=226
+	campaignId=7
+	subCampaign=45
+	currency=USD
+	a_aid=4c1784efdcccb
+	birthday=1980-07-21
+	*/
+
+	$ch = curl_init(BANCO_API_URL);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+	$response = curl_exec($ch);
+	curl_close($ch);
+	print_r($post);
+	var_dump($response);
+	exit();
+}
+
+
+
+
+?>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ChartVisual.com - Advanced Forex & Binary Options Technologies</title>
+
+	<!-- Global stylesheets -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	<link href="assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/bootstrap.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/core.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/components.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/colors.css" rel="stylesheet" type="text/css">
+	<!-- /global stylesheets -->
+
+	<!-- Core JS files -->
+	<script type="text/javascript" src="assets/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="assets/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="assets/js/plugins/forms/styling/uniform.min.js"></script>
+
+	<script type="text/javascript" src="assets/js/core/app.js"></script>
+	<script type="text/javascript" src="assets/js/pages/form_layouts.js"></script>
+	<!-- /theme JS files -->
+
+
+</head>
+
+<body>
+
+	<!-- Main navbar -->
+	<div class="navbar navbar-inverse">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="index.html"><img src="assets/images/logo_light.png" alt=""></a>
+
+			<ul class="nav navbar-nav pull-right visible-xs-block">
+				<li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
+				<li><a class="sidebar-mobile-main-toggle"><i class="icon-paragraph-justify3"></i></a></li>
+			</ul>
+		</div>
+
+		<div class="navbar-collapse collapse" id="navbar-mobile">
+			<ul class="nav navbar-nav" style="display:none;">
+				<li>
+					<a class="sidebar-control sidebar-main-toggle hidden-xs">
+						<i class="icon-paragraph-justify3"></i>
+					</a>
+				</li>
+
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<i class="icon-git-compare"></i>
+						<span class="visible-xs-inline-block position-right">Git updates</span>
+						<span class="badge bg-warning-400">9</span>
+					</a>
+					
+					<div class="dropdown-menu dropdown-content">
+						<div class="dropdown-content-heading">
+							Git updates
+							<ul class="icons-list">
+								<li><a href="#"><i class="icon-sync"></i></a></li>
+							</ul>
+						</div>
+
+						<ul class="media-list dropdown-content-body width-350">
+							<li class="media">
+								<div class="media-left">
+									<a href="#" class="btn border-primary text-primary btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-pull-request"></i></a>
+								</div>
+
+								<div class="media-body">
+									Drop the IE <a href="#">specific hacks</a> for temporal inputs
+									<div class="media-annotation">4 minutes ago</div>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left">
+									<a href="#" class="btn border-warning text-warning btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-commit"></i></a>
+								</div>
+								
+								<div class="media-body">
+									Add full font overrides for popovers and tooltips
+									<div class="media-annotation">36 minutes ago</div>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left">
+									<a href="#" class="btn border-info text-info btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-branch"></i></a>
+								</div>
+								
+								<div class="media-body">
+									<a href="#">Chris Arney</a> created a new <span class="text-semibold">Design</span> branch
+									<div class="media-annotation">2 hours ago</div>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left">
+									<a href="#" class="btn border-success text-success btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-merge"></i></a>
+								</div>
+								
+								<div class="media-body">
+									<a href="#">Eugene Kopyov</a> merged <span class="text-semibold">Master</span> and <span class="text-semibold">Dev</span> branches
+									<div class="media-annotation">Dec 18, 18:36</div>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left">
+									<a href="#" class="btn border-primary text-primary btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-pull-request"></i></a>
+								</div>
+								
+								<div class="media-body">
+									Have Carousel ignore keyboard events
+									<div class="media-annotation">Dec 12, 05:46</div>
+								</div>
+							</li>
+						</ul>
+
+						<div class="dropdown-content-footer">
+							<a href="#" data-popup="tooltip" title="All activity"><i class="icon-menu display-block"></i></a>
+						</div>
+					</div>
+				</li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right" style="display:none;">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<i class="icon-people"></i>
+						<span class="visible-xs-inline-block position-right">Users</span>
+					</a>
+					
+					<div class="dropdown-menu dropdown-content">
+						<div class="dropdown-content-heading">
+							Users online
+							<ul class="icons-list">
+								<li><a href="#"><i class="icon-gear"></i></a></li>
+							</ul>
+						</div>
+
+						<ul class="media-list dropdown-content-body width-300">
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading text-semibold">Jordana Ansley</a>
+									<span class="display-block text-muted text-size-small">Lead web developer</span>
+								</div>
+								<div class="media-right media-middle"><span class="status-mark border-success"></span></div>
+							</li>
+
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading text-semibold">Will Brason</a>
+									<span class="display-block text-muted text-size-small">Marketing manager</span>
+								</div>
+								<div class="media-right media-middle"><span class="status-mark border-danger"></span></div>
+							</li>
+
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading text-semibold">Hanna Walden</a>
+									<span class="display-block text-muted text-size-small">Project manager</span>
+								</div>
+								<div class="media-right media-middle"><span class="status-mark border-success"></span></div>
+							</li>
+
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading text-semibold">Dori Laperriere</a>
+									<span class="display-block text-muted text-size-small">Business developer</span>
+								</div>
+								<div class="media-right media-middle"><span class="status-mark border-warning-300"></span></div>
+							</li>
+
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading text-semibold">Vanessa Aurelius</a>
+									<span class="display-block text-muted text-size-small">UX expert</span>
+								</div>
+								<div class="media-right media-middle"><span class="status-mark border-grey-400"></span></div>
+							</li>
+						</ul>
+
+						<div class="dropdown-content-footer">
+							<a href="#" data-popup="tooltip" title="All users"><i class="icon-menu display-block"></i></a>
+						</div>
+					</div>
+				</li>
+
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<i class="icon-bubbles4"></i>
+						<span class="visible-xs-inline-block position-right">Messages</span>
+						<span class="badge bg-warning-400">2</span>
+					</a>
+					
+					<div class="dropdown-menu dropdown-content width-350">
+						<div class="dropdown-content-heading">
+							Messages
+							<ul class="icons-list">
+								<li><a href="#"><i class="icon-compose"></i></a></li>
+							</ul>
+						</div>
+
+						<ul class="media-list dropdown-content-body">
+							<li class="media">
+								<div class="media-left">
+									<img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt="">
+									<span class="badge bg-danger-400 media-badge">5</span>
+								</div>
+
+								<div class="media-body">
+									<a href="#" class="media-heading">
+										<span class="text-semibold">James Alexander</span>
+										<span class="media-annotation pull-right">04:58</span>
+									</a>
+
+									<span class="text-muted">who knows, maybe that would be the best thing for me...</span>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left">
+									<img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt="">
+									<span class="badge bg-danger-400 media-badge">4</span>
+								</div>
+
+								<div class="media-body">
+									<a href="#" class="media-heading">
+										<span class="text-semibold">Margo Baker</span>
+										<span class="media-annotation pull-right">12:16</span>
+									</a>
+
+									<span class="text-muted">That was something he was unable to do because...</span>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading">
+										<span class="text-semibold">Jeremy Victorino</span>
+										<span class="media-annotation pull-right">22:48</span>
+									</a>
+
+									<span class="text-muted">But that would be extremely strained and suspicious...</span>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading">
+										<span class="text-semibold">Beatrix Diaz</span>
+										<span class="media-annotation pull-right">Tue</span>
+									</a>
+
+									<span class="text-muted">What a strenuous career it is that I've chosen...</span>
+								</div>
+							</li>
+
+							<li class="media">
+								<div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+								<div class="media-body">
+									<a href="#" class="media-heading">
+										<span class="text-semibold">Richard Vango</span>
+										<span class="media-annotation pull-right">Mon</span>
+									</a>
+									
+									<span class="text-muted">Other travelling salesmen live a life of luxury...</span>
+								</div>
+							</li>
+						</ul>
+
+						<div class="dropdown-content-footer">
+							<a href="#" data-popup="tooltip" title="All messages"><i class="icon-menu display-block"></i></a>
+						</div>
+					</div>
+				</li>
+
+				<li class="dropdown dropdown-user">
+					<a class="dropdown-toggle" data-toggle="dropdown">
+						<img src="assets/images/placeholder.jpg" alt="">
+						<span>Victoria</span>
+						<i class="caret"></i>
+					</a>
+
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li><a href="#"><i class="icon-user-plus"></i> My profile</a></li>
+						<li><a href="#"><i class="icon-coins"></i> My balance</a></li>
+						<li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>
+						<li class="divider"></li>
+						<li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
+						<li><a href="#"><i class="icon-switch2"></i> Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /main navbar -->
+
+
+	<!-- Page container -->
+	<div class="page-container">
+
+		<!-- Page content -->
+		<div class="page-content">
+
+			<!-- Main sidebar -->
+			<div class="sidebar sidebar-main"  style="display:none;">
+				<div class="sidebar-content">
+
+					<!-- User menu -->
+					<div class="sidebar-user" style="display:none;">
+						<div class="category-content">
+							<div class="media">
+								<a href="#" class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></a>
+								<div class="media-body">
+									<span class="media-heading text-semibold">Victoria Baker</span>
+									<div class="text-size-mini text-muted">
+										<i class="icon-pin text-size-small"></i> &nbsp;Santa Ana, CA
+									</div>
+								</div>
+
+								<div class="media-right media-middle">
+									<ul class="icons-list">
+										<li>
+											<a href="#"><i class="icon-cog3"></i></a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /user menu -->
+
+
+					<!-- Main navigation -->
+					<div class="sidebar-category sidebar-category-visible">
+						<div class="category-content no-padding">
+							<ul class="navigation navigation-main navigation-accordion">
+
+								<!-- Main -->
+								<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
+								<li><a href="index.html"><i class="icon-home4"></i> <span>Home</span></a></li>
+
+
+							</ul>
+						</div>
+					</div>
+					<!-- /main navigation -->
+
+				</div>
+			</div>
+			<!-- /main sidebar -->
+
+
+			<!-- Main content -->
+			<div class="content-wrapper">
+
+
+
+				<!-- Content area -->
+				<div class="content">
+
+					<!-- Horizontal form options -->
+					<div class="row text-center">
+						<div class="col-md-9"   >
+
+							<!-- Basic layout-->
+							<form action="index.php?a=signup" class="form-horizontal" style="margin:auto 0;">
+								<div class="col-md-3">
+									<img src="assets/images/guy.png" style=""/>
+								</div>
+								<div class="panel panel-flat col-md-9">
+									<div class="panel-heading  text-center">
+										<h5 class="panel-title">Welcome, please select a broker below:</h5>
+									</div>
+								
+									<div class="panel-body">
+										
+										<div class="tabbable">
+											<ul class="nav nav-lg nav-tabs nav-tabs-solid nav-tabs-component nav-justified nav-tabs-lg col-md-12">
+												<li class="active">
+													<a href="#large-tab1" data-toggle="tab">Boss Capital (Preferred)</a>
+												</li>
+												<li>
+													<a href="#large-tab2" data-toggle="tab">Magnum Options</a>
+												</li>
+											</ul>
+
+											<div class="tab-content text-center">
+												<br/><br/>
+												
+												<div class="tab-pane  active" id="large-tab1">
+													<iframe src="http://binary.bosscapital.com/aff_c?offer_id=184&aff_sub3=CV&aff_id=60951&&url_id=1321&file_id=4725" style="margin:0 auto;" seamless scrolling="no" frameborder="0" width="500" height="610"></iframe>
+												
+												</div>
+												<div class="tab-pane text-center" id="large-tab2">
+														<img src="assets/images/logo_magnum.png"/>
+
+														<br/><br/>
+														<div class="form-group">
+															<label class="col-lg-3 control-label text-right">First Name: <span class="text-danger">*</span></label>
+															<div class="col-lg-9">
+																<input type="text" class="form-control" name="firstname" required="required" placeholder="Your first name">
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="col-lg-3 control-label text-right">Last Name: <span class="text-danger">*</span></label>
+															<div class="col-lg-9">
+																<input type="text" class="form-control" name="lastname"  required="required" placeholder="Your first name">
+															</div>
+														</div>
+
+														<!-- Email field -->
+														<div class="form-group">
+															<label class="control-label col-lg-3 text-right">Email field <span class="text-danger">*</span></label>
+															<div class="col-lg-9">
+																<input type="email" name="email" class="form-control" id="email" required="required" placeholder="Enter a valid email address">
+															</div>
+														</div>
+														<!-- /email field -->
+
+														<div class="form-group">
+															<label class="control-label col-lg-3 text-right">Phone number<span class="text-danger">*</span></label>
+															<div class="col-lg-9">
+
+								                        		<input type="text" class="form-control" name="phonenumber" data-mask="+39 999 999 999" placeholder="Enter your phone in international format">
+								                        		<span class="help-block">+39 999 999 999</span>
+															</div>
+														</div>
+
+
+														<div class="form-group" style="display:none;">
+															<label class="col-lg-3 control-label text-right">Currency you will deposit:</label>
+															<div class="col-lg-9">
+																<select class="select" name="currency">
+																	<option value='AUD'>AUD - Australian Dollar</option>
+																	<option value='CAD'>CAD - Canadian Dollar</option>
+																	<option value='CHF'>CHF - Swiss Franc</option>
+																	<option value='CNY'>CNY - Chinese Yuan Renminbi</option>
+																	<option value='DKK'>DKK - Danish Krone</option>
+																	<option value='EUR'>EUR - Euro</option>
+																	<option value='GBP'>GBP - British Pound</option>
+																	<option value='HKD'>HKD - Hong Kong Dollar</option>
+																	<option value='HUF'>HUF - Hungarian Forint</option>
+																	<option value='INR'>INR - Indian Rupee</option>
+																	<option value='JPY'>JPY - Japanese Yen</option>
+																	<option value='MXN'>MXN - Mexican Peso</option>
+																	<option value='MYR'  selected="selected">MYR - Malaysian Ringgit</option>
+																	<option value='NOK'>NOK - Norwegian Krone</option>
+																	<option value='NZD'>NZD - New Zealand Dollar</option>
+																	<option value='PHP'>PHP - Philippine Peso</option>
+																	<option value='RUB'>RUB - Russian Ruble</option>
+																	<option value='SEK'>SEK - Swedish Krona</option>
+																	<option value='SGD'>SGD - Singapore Dollar</option>
+																	<option value='THB'>THB - Thai Baht</option>
+																	<option value='TRY'>TRY - Turkish Lira</option>
+																	<option value='USD'>USD - US Dollar</option>
+																	<option value='ZAR'>ZAR - South African Rand</option>
+																</select>
+															</div>
+														</div>
+
+
+														<div class="text-right">
+															<button type="submit" class="btn btn-primary">Continue <i class="icon-arrow-right14 position-right"></i></button>
+														</div>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</form>
+							<!-- /basic layout -->
+
+						</div>
+					</div>
+					<!-- /vertical form options -->
+					
+					<div class="row text-center">
+						<div class="col-md-12 text-center panel panel-flat">
+									<div class="panel-heading  text-center">
+										<h5 class="panel-title">Please sign up for our Forex broker below:</h5>
+									</div>
+									<div class="panel-body text-center">
+										<iframe  scrolling="no" width="1000" height="430" src="https://www.hotforex.com/hf/en/landing-pages/100-percent-bonus.html?refid=131722" target="_blank"  style="margin:0 auto;">
+										</iframe>
+									</div>
+
+						</div>
+					</div>
+
+					<!-- Footer -->
+					<div class="footer text-muted">
+						&copy; 2016. <a href="#">ChartVisual</a>
+					</div>
+					<!-- /footer -->
+
+				</div>
+				<!-- /content area -->
+
+			</div>
+			<!-- /main content -->
+
+		</div>
+		<!-- /page content -->
+
+	</div>
+	<!-- /page container -->
+
+</body>
+</html>
